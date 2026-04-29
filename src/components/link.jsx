@@ -1,9 +1,9 @@
-function Link(props = { text, to }) {
+function Link(props) {
+  const { text, to } = props;
   return (
-    <a {...props} href={props.to} target='_blank'>
-      {props.text}
+    <a href={to} target='_blank' rel='noopener noreferrer'>
+      {text}
     </a>
   );
 }
-
 export default Link;

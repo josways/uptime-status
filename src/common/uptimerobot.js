@@ -32,9 +32,10 @@ export async function GetMonitors(apikey, days) {
     const ranges = monitor.custom_uptime_ranges.split('-');
     const average = formatNumber(ranges.pop());
     const daily = [];
-    const map = [];
+    const dateMap = {};
     dates.forEach((date, index) => {
-      map[date.format('YYYYMMDD')] = index;
+      const key = date.format('YYYYMMDD');
+      dateMap[key] = index;
       daily[index] = {
         date: date,
         uptime: formatNumber(ranges[index]),
@@ -47,8 +48,11 @@ export async function GetMonitors(apikey, days) {
         const date = dayjs.unix(log.datetime).format('YYYYMMDD');
         total.duration += log.duration;
         total.times += 1;
-        daily[map[date]].down.duration += log.duration;
-        daily[map[date]].down.times += 1;
+        const idx = dateMap[date];
+        if (idx !== undefined) {
+          daily[idx].down.duration += log.duration;
+          daily[idx].down.times += 1;
+        }
       }
       return total;
     }, { times: 0, duration: 0 });

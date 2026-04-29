@@ -5,13 +5,17 @@ import UptimeRobot from './uptimerobot';
 import Package from '../../package.json';
 
 function App() {
+  const config = window.Config;
 
   const apikeys = useMemo(() => {
-    const { ApiKeys } = window.Config;
+    if (!config) return [];
+    const { ApiKeys } = config;
     if (Array.isArray(ApiKeys)) return ApiKeys;
     if (typeof ApiKeys === 'string') return [ApiKeys];
     return [];
-  }, []);
+  }, [config]);
+
+  if (!config) return null;
 
   return (
     <>

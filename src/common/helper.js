@@ -3,15 +3,15 @@ export function formatNumber(value) {
 }
 
 export function formatDuration(seconds) {
-  let s = parseInt(seconds);
+  let s = Math.floor(seconds);
   let m = 0;
   let h = 0;
   if (s >= 60) {
-    m = parseInt(s / 60);
-    s = parseInt(s % 60);
+    m = Math.floor(s / 60);
+    s = Math.floor(s % 60);
     if (m >= 60) {
-      h = parseInt(m / 60);
-      m = parseInt(m % 60);
+      h = Math.floor(m / 60);
+      m = Math.floor(m % 60);
     }
   }
   let text = `${s} 秒`;
