@@ -5,18 +5,11 @@ import { cloudflare } from '@cloudflare/vite-plugin';
 export default defineConfig({
   plugins: [
     react(),
-    cloudflare(),
+  cloudflare(),
   ],
-  optimizeDeps: {
-    rolldownOptions: {
-      loader: {
-        '.js': 'jsx',
-      },
-    },
-  },
   server: {
     port: 3000,
-    open: true
+    open: false
   },
   build: {
     sourcemap: false
