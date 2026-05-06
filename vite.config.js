@@ -1,17 +1,21 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { cloudflare } from '@cloudflare/vite-plugin';
 
-export default defineConfig({
-  plugins: [
-    react(),
-  cloudflare(),
-  ],
-  server: {
-    port: 3000,
-    open: false
-  },
-  build: {
-    sourcemap: false
+export default defineConfig(async ({ command }) => {
+  const plugins = [react()];
+  if (command === 'build') {
+    const { cloudflare } = await import('@cloudflare/vite-plugin');
+    plugins.push(cloudflare());
   }
+  return {
+    plugins,
+    server: {
+      host: '0.0.0.0',
+      port: 5173,
+      open: false,
+    },
+    build: {
+      sourcemap: false,
+    },
+  };
 });

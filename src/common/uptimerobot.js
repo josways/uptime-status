@@ -19,7 +19,7 @@ export async function GetMonitors(apikey, days) {
     api_key: apikey,
     format: 'json',
     logs: 1,
-    log_types: '1-2',
+    log_types: '1',
     logs_start_date: start,
     logs_end_date: end,
     custom_uptime_ranges: ranges.join('-'),
@@ -29,8 +29,8 @@ export async function GetMonitors(apikey, days) {
   if (response.data.stat !== 'ok') throw response.data.error;
   return response.data.monitors.map((monitor) => {
 
-    const ranges = monitor.custom_uptime_ranges.split('-');
-    const average = formatNumber(ranges.pop());
+    const uptimeRanges = monitor.custom_uptime_ranges.split('-');
+    const average = formatNumber(uptimeRanges.pop());
     const daily = [];
     const dateMap = {};
     dates.forEach((date, index) => {
@@ -38,7 +38,7 @@ export async function GetMonitors(apikey, days) {
       dateMap[key] = index;
       daily[index] = {
         date: date,
-        uptime: formatNumber(ranges[index]),
+        uptime: formatNumber(uptimeRanges[index]),
         down: { times: 0, duration: 0 },
       }
     });
@@ -64,7 +64,7 @@ export async function GetMonitors(apikey, days) {
       average: average,
       daily: daily,
       total: total,
-      status: 'unknow',
+      status: 'unknown',
     };
 
     if (monitor.status === 2) result.status = 'ok';

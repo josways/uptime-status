@@ -1,19 +1,22 @@
-import { useMemo } from 'react';
+import { useState } from 'react';
 import Link from './link';
 import Header from './header';
 import UptimeRobot from './uptimerobot';
 import Package from '../../package.json';
 
+const RANGE_OPTIONS = [7, 30, 90];
+
 function App() {
   const config = window.Config;
+  const [days, setDays] = useState(config?.CountDays || 30);
 
-  const apikeys = useMemo(() => {
+  const apikeys = (() => {
     if (!config) return [];
     const { ApiKeys } = config;
     if (Array.isArray(ApiKeys)) return ApiKeys;
     if (typeof ApiKeys === 'string') return [ApiKeys];
     return [];
-  }, [config]);
+  })();
 
   if (!config) return null;
 
@@ -22,8 +25,21 @@ function App() {
       <Header />
       <div className='container'>
         <div id='uptime'>
+          <div className='toolbar'>
+            <div className='range-selector'>
+              {RANGE_OPTIONS.map((d) => (
+                <button
+                  key={d}
+                  className={days === d ? 'active' : ''}
+                  onClick={() => setDays(d)}
+                >
+                  {d} 天
+                </button>
+              ))}
+            </div>
+          </div>
           {apikeys.map((key) => (
-            <UptimeRobot key={key} apikey={key} />
+            <UptimeRobot key={key} apikey={key} days={days} />
           ))}
         </div>
         <div id='footer'>

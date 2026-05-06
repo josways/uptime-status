@@ -14,6 +14,11 @@ export function formatDuration(seconds) {
       m = Math.floor(m % 60);
     }
   }
+  if (h >= 24) {
+    const d = Math.floor(h / 24);
+    h = Math.floor(h % 24);
+    return `${d} 天 ${h} 小时 ${m} 分 ${s} 秒`;
+  }
   let text = `${s} 秒`;
   if (m > 0) text = `${m} 分 ${text}`;
   if (h > 0) text = `${h} 小时 ${text}`;
