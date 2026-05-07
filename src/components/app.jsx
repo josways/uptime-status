@@ -4,11 +4,13 @@ import Header from './header';
 import UptimeRobot from './uptimerobot';
 import Package from '../../package.json';
 
-const RANGE_OPTIONS = [7, 30, 90];
+const RANGE_OPTIONS = [7, 30];
+const DEFAULT_RANGE = 7;
 
 function App() {
   const config = window.Config;
-  const [days, setDays] = useState(config?.CountDays || 30);
+  const initialDays = RANGE_OPTIONS.includes(config?.CountDays) ? config.CountDays : DEFAULT_RANGE;
+  const [days, setDays] = useState(initialDays);
 
   const apikeys = (() => {
     if (!config) return [];

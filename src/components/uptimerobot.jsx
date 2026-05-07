@@ -16,19 +16,23 @@ function UptimeRobot({ apikey, days }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
-  const [config] = useState(window.Config);
+  const config = window.Config;
+  const requestIdRef = useRef(0);
 
   const fetchData = useCallback(() => {
     if (!config) return;
+    const requestId = ++requestIdRef.current;
     setLoading(true);
     setError(null);
     GetMonitors(apikey, days)
       .then((data) => {
+        if (requestId !== requestIdRef.current) return;
         setMonitors(data);
         setLastUpdate(new Date());
         setLoading(false);
       })
       .catch((err) => {
+        if (requestId !== requestIdRef.current) return;
         setError(err?.message || String(err));
         setLoading(false);
       });
