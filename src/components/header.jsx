@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react';
 import Link from './link';
+import { getConfig } from '../common/config';
+
+const DARK_MODE_STORAGE_KEY = 'dark-mode';
+
+function getInitialDarkMode() {
+  const saved = localStorage.getItem(DARK_MODE_STORAGE_KEY);
+  if (saved === 'true') return true;
+  if (saved === 'false') return false;
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
 
 function Header() {
-  const config = window.Config;
-  const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem('dark-mode');
-    return saved === 'true';
-  });
+  const config = getConfig();
+  const [dark, setDark] = useState(getInitialDarkMode);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('dark-mode', dark);
+    localStorage.setItem(DARK_MODE_STORAGE_KEY, String(dark));
   }, [dark]);
 
   useEffect(() => {
@@ -24,13 +32,18 @@ function Header() {
       <div className='container'>
         <h1 className='logo'>{config.SiteName}</h1>
         <div className='navi'>
-          {config.Navi.map((item, index) => (
-            <Link key={index} to={item.url} text={item.text} />
+          {config.Navi.map((item) => (
+            <Link key={item.url} to={item.url}>
+              {item.text}
+            </Link>
           ))}
           <button
             className='dark-toggle'
-            onClick={() => setDark(!dark)}
+            type='button'
+            onClick={() => setDark((current) => !current)}
             title={dark ? '切换亮色模式' : '切换暗色模式'}
+            aria-label={dark ? '切换到亮色模式' : '切换到暗色模式'}
+            aria-pressed={dark}
           >
             {dark ? '☀️' : '🌙'}
           </button>

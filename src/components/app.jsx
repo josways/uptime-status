@@ -2,23 +2,16 @@ import { useState } from 'react';
 import Link from './link';
 import Header from './header';
 import UptimeRobot from './uptimerobot';
+import { getConfig } from '../common/config';
 import Package from '../../package.json';
 
 const RANGE_OPTIONS = [7, 30];
-const DEFAULT_RANGE = 7;
 
 function App() {
-  const config = window.Config;
-  const initialDays = RANGE_OPTIONS.includes(config?.CountDays) ? config.CountDays : DEFAULT_RANGE;
-  const [days, setDays] = useState(initialDays);
-
-  const apikeys = (() => {
-    if (!config) return [];
-    const { ApiKeys } = config;
-    if (Array.isArray(ApiKeys)) return ApiKeys;
-    if (typeof ApiKeys === 'string') return [ApiKeys];
-    return [];
-  })();
+  const config = getConfig();
+  const [days, setDays] = useState(() => (
+    RANGE_OPTIONS.includes(config?.CountDays) ? config.CountDays : RANGE_OPTIONS[0]
+  ));
 
   if (!config) return null;
 
@@ -32,7 +25,9 @@ function App() {
               {RANGE_OPTIONS.map((d) => (
                 <button
                   key={d}
+                  type='button'
                   className={days === d ? 'active' : ''}
+                  aria-pressed={days === d}
                   onClick={() => setDays(d)}
                 >
                   {d} 天
@@ -40,13 +35,20 @@ function App() {
               ))}
             </div>
           </div>
-          {apikeys.map((key) => (
-            <UptimeRobot key={key} apikey={key} days={days} />
-          ))}
+          {config.ApiKeys.length
+            ? config.ApiKeys.map((key) => (
+              <UptimeRobot key={key} apikey={key} days={days} />
+            ))
+            : (
+              <div className='empty-state'>
+                请先在 <code>public/config.js</code> 中配置 UptimeRobot API Key。
+              </div>
+            )
+          }
         </div>
         <div id='footer'>
-          <p>基于 <Link to='https://uptimerobot.com/' text='UptimeRobot' /> 接口制作，检测频率 5 分钟</p>
-          <p>&copy; 2020 <Link to='https://status.org.cn/' text='STATUS.ORG.CN' />, Version {Package.version}</p>
+          <p>基于 <Link to='https://uptimerobot.com/'>UptimeRobot</Link> 接口制作，检测频率 5 分钟</p>
+          <p>&copy; 2020 <Link to='https://status.org.cn/'>STATUS.ORG.CN</Link>, Version {Package.version}</p>
         </div>
       </div>
     </>

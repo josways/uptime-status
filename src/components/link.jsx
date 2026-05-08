@@ -1,9 +1,11 @@
 function Link(props) {
-  const { text, to, ...rest } = props;
-   return (
+  const { children, to, ...rest } = props;
+
+  return (
     <a href={to} target='_blank' rel='noopener noreferrer' {...rest}>
-       {text}
-     </a>
-   );
- }
+      {children}
+    </a>
+  );
+}
+
 export default Link;
